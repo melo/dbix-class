@@ -274,4 +274,11 @@ unless ($ENV{DBICTEST_KEEP_VERSIONING_DDL}) {
     unlink $_ for (values %$fn);
 }
 
+# test ddl_filename()
+is(
+  $schema_v1->ddl_filename('MySQL', '2.0', '/dont/care/2.0/versions', '1.0'),
+  '/dont/care/2.0/versions/DBICVersion-Schema-1.0-2.0-MySQL.sql',
+  'Filename works properly with VERSION in the middle'
+);
+
 done_testing;
