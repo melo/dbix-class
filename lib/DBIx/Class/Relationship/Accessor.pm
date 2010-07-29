@@ -3,6 +3,7 @@ package # hide from PAUSE
 
 use strict;
 use warnings;
+use Scalar::Util qw/blessed/;
 use Sub::Name ();
 
 our %_pod_inherit_config = 
@@ -26,8 +27,26 @@ sub add_relationship_accessor {
     $meth{$rel} = sub {
       my $self = shift;
       if (@_) {
-        $self->set_from_related($rel, @_);
-        return $self->{_relationship_data}{$rel} = $_[0];
+        my $f_obj = $_[0];
+        my $rel_o;
+        if (ref $f_obj eq 'HASH') {
+          $rel_o = $self->find_related($rel, {}, {});
+          if ($rel_o) {
+            $rel_o->update($f_obj);
+          }
+          else {
+            $rel_o = $self->create_related($rel, $f_obj);
+          }
+        }
+        elsif (blessed($f_obj)) {
+          $self->set_from_related($rel, @_);
+          $rel_o = $f_obj;
+        }
+        else {
+          die "Relation accessor '$rel' accepts an object or a hashref, got '$f_obj', ";
+        }
+
+        return $self->{_relationship_data}{$rel} = $rel_o;
       } elsif (exists $self->{_relationship_data}{$rel}) {
         return $self->{_relationship_data}{$rel};
       } else {
