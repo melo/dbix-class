@@ -936,12 +936,12 @@ C<$sqlt_table> being deployed.
 =cut
 
 sub default_sqlt_deploy_hook {
-  my $self = shift;
+  my ($self, $table) = @_;
 
   my $class = $self->result_class;
 
   if ($class and $class->can('sqlt_deploy_hook')) {
-    $class->sqlt_deploy_hook(@_);
+    $class->sqlt_deploy_hook($table, $self);
   }
 }
 
