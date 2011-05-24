@@ -1,8 +1,10 @@
 Revision history for DBIx::Class
 
+    * Fixes
         - Fix issue where the query was becoming overly mangled when trying
           to use pagination with a query that has a sub-select in the WHERE
           clause.
+        - Reverted "Fix incorrect signature of the default sqlt_deploy_hook"
 
 0.08192 2011-05-10 04:20 (UTC)
     * Fixes
